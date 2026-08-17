@@ -29,3 +29,6 @@ Thumbs.db
 # IDE / editor
 .vscode/
 .idea/
+
+# npm package artifacts
+*.tgz
