@@ -1,0 +1,346 @@
+syntax = "proto3";
+
+package ecommerce.catalog.v1;
+
+import "google/protobuf/timestamp.proto";
+import "ecommerce/common/v1/common.proto";
+import "buf/validate/validate.proto";
+
+// ============================================================================
+// Product Service
+// ============================================================================
+
+service ProductService {
+  rpc Create(ProductServiceCreateRequest)
+      returns (ProductServiceCreateResponse);
+
+  rpc GetById(ProductServiceGetByIdRequest)
+      returns (ProductServiceGetByIdResponse);
+
+  rpc Update(ProductServiceUpdateRequest)
+      returns (ProductServiceUpdateResponse);
+
+  rpc Delete(ProductServiceDeleteRequest)
+      returns (ProductServiceDeleteResponse);
+
+  rpc Restore(ProductServiceRestoreRequest)
+      returns (ProductServiceRestoreResponse);
+
+  rpc Paginate(ProductServicePaginateRequest)
+      returns (ProductServicePaginateResponse);
+
+  rpc FindByCategory(ProductServiceFindByCategoryRequest)
+      returns (ProductServiceFindByCategoryResponse);
+
+  rpc FindByUser(ProductServiceFindByUserRequest)
+      returns (ProductServiceFindByUserResponse);
+}
+
+// ============================================================================
+// Category Service
+// ============================================================================
+
+service CategoryService {
+  rpc Create(CategoryServiceCreateRequest)
+      returns (CategoryServiceCreateResponse);
+
+  rpc GetById(CategoryServiceGetByIdRequest)
+      returns (CategoryServiceGetByIdResponse);
+
+  rpc FindAll(CategoryServiceFindAllRequest)
+      returns (CategoryServiceFindAllResponse);
+
+  rpc Update(CategoryServiceUpdateRequest)
+      returns (CategoryServiceUpdateResponse);
+
+  rpc Delete(CategoryServiceDeleteRequest)
+      returns (CategoryServiceDeleteResponse);
+
+  rpc Restore(CategoryServiceRestoreRequest)
+      returns (CategoryServiceRestoreResponse);
+
+  rpc Paginate(CategoryServicePaginateRequest)
+      returns (CategoryServicePaginateResponse);
+}
+
+// ============================================================================
+// Product Requests
+// ============================================================================
+
+message ProductServiceCreateRequest {
+  string name = 1 [
+    (buf.validate.field).string = {
+      min_len: 1
+      max_len: 255
+    }
+  ];
+
+  optional string description = 2 [
+    (buf.validate.field).string.max_len = 2000
+  ];
+
+  double price = 3 [
+    (buf.validate.field).double.gt = 0
+  ];
+
+  int32 category_id = 4 [
+    (buf.validate.field).int32.gt = 0
+  ];
+
+  int32 user_id = 5 [
+    (buf.validate.field).int32.gt = 0
+  ];
+}
+
+message ProductServiceGetByIdRequest {
+  int32 id = 1 [
+    (buf.validate.field).int32.gt = 0
+  ];
+}
+
+message ProductServiceUpdateRequest {
+  int32 id = 1 [
+    (buf.validate.field).int32.gt = 0
+  ];
+
+  optional string name = 2 [
+    (buf.validate.field).string = {
+      min_len: 1
+      max_len: 255
+    }
+  ];
+
+  optional string description = 3 [
+    (buf.validate.field).string.max_len = 2000
+  ];
+
+  optional double price = 4 [
+    (buf.validate.field).double.gt = 0
+  ];
+
+  optional int32 category_id = 5 [
+    (buf.validate.field).int32.gt = 0
+  ];
+}
+
+message ProductServiceDeleteRequest {
+  int32 id = 1 [
+    (buf.validate.field).int32.gt = 0
+  ];
+}
+
+message ProductServiceRestoreRequest {
+  int32 id = 1 [
+    (buf.validate.field).int32.gt = 0
+  ];
+}
+
+message ProductServicePaginateRequest {
+  int32 page = 1 [
+    (buf.validate.field).int32.gt = 0
+  ];
+
+  int32 limit = 2 [
+    (buf.validate.field).int32 = {
+      gt: 0
+      lte: 100
+    }
+  ];
+
+  optional string search = 3 [
+    (buf.validate.field).string.max_len = 100
+  ];
+
+  optional string order_by = 4 [
+    (buf.validate.field).string.max_len = 50
+  ];
+
+  ecommerce.common.v1.SortOrder order = 5 [
+    (buf.validate.field).enum.defined_only = true
+  ];
+}
+
+message ProductServiceFindByCategoryRequest {
+  int32 category_id = 1 [
+    (buf.validate.field).int32.gt = 0
+  ];
+}
+
+message ProductServiceFindByUserRequest {
+  int32 user_id = 1 [
+    (buf.validate.field).int32.gt = 0
+  ];
+}
+
+// ============================================================================
+// Product Responses
+// ============================================================================
+
+message ProductServiceCreateResponse {
+  Product product = 1;
+}
+
+message ProductServiceGetByIdResponse {
+  Product product = 1;
+}
+
+message ProductServiceUpdateResponse {
+  Product product = 1;
+}
+
+message ProductServiceDeleteResponse {
+  bool success = 1;
+}
+
+message ProductServiceRestoreResponse {
+  Product product = 1;
+}
+
+message ProductServicePaginateResponse {
+  repeated Product items = 1;
+  ecommerce.common.v1.PageMeta meta = 2;
+}
+
+message ProductServiceFindByCategoryResponse {
+  repeated Product items = 1;
+}
+
+message ProductServiceFindByUserResponse {
+  repeated Product items = 1;
+}
+
+// ============================================================================
+// Category Requests
+// ============================================================================
+
+message CategoryServiceCreateRequest {
+  string name = 1 [
+    (buf.validate.field).string = {
+      min_len: 1
+      max_len: 255
+    }
+  ];
+
+  optional string description = 2 [
+    (buf.validate.field).string.max_len = 2000
+  ];
+}
+
+message CategoryServiceGetByIdRequest {
+  int32 id = 1 [
+    (buf.validate.field).int32.gt = 0
+  ];
+}
+
+message CategoryServiceFindAllRequest {}
+
+message CategoryServiceUpdateRequest {
+  int32 id = 1 [
+    (buf.validate.field).int32.gt = 0
+  ];
+
+  optional string name = 2 [
+    (buf.validate.field).string = {
+      min_len: 1
+      max_len: 255
+    }
+  ];
+
+  optional string description = 3 [
+    (buf.validate.field).string.max_len = 2000
+  ];
+}
+
+message CategoryServiceDeleteRequest {
+  int32 id = 1 [
+    (buf.validate.field).int32.gt = 0
+  ];
+}
+
+message CategoryServiceRestoreRequest {
+  int32 id = 1 [
+    (buf.validate.field).int32.gt = 0
+  ];
+}
+
+message CategoryServicePaginateRequest {
+  int32 page = 1 [
+    (buf.validate.field).int32.gt = 0
+  ];
+
+  int32 limit = 2 [
+    (buf.validate.field).int32 = {
+      gt: 0
+      lte: 100
+    }
+  ];
+
+  optional string search = 3 [
+    (buf.validate.field).string.max_len = 100
+  ];
+
+  optional string order_by = 4 [
+    (buf.validate.field).string.max_len = 50
+  ];
+
+  ecommerce.common.v1.SortOrder order = 5 [
+    (buf.validate.field).enum.defined_only = true
+  ];
+}
+
+// ============================================================================
+// Category Responses
+// ============================================================================
+
+message CategoryServiceCreateResponse {
+  Category category = 1;
+}
+
+message CategoryServiceGetByIdResponse {
+  Category category = 1;
+}
+
+message CategoryServiceFindAllResponse {
+  repeated Category items = 1;
+}
+
+message CategoryServiceUpdateResponse {
+  Category category = 1;
+}
+
+message CategoryServiceDeleteResponse {
+  bool success = 1;
+}
+
+message CategoryServiceRestoreResponse {
+  Category category = 1;
+}
+
+message CategoryServicePaginateResponse {
+  repeated Category items = 1;
+  ecommerce.common.v1.PageMeta meta = 2;
+}
+
+// ============================================================================
+// Domain Messages
+// ============================================================================
+
+message Product {
+  int32 id = 1;
+  string name = 2;
+  string description = 3;
+  double price = 4;
+  int32 category_id = 5;
+  int32 user_id = 6;
+  google.protobuf.Timestamp created_at = 7;
+  google.protobuf.Timestamp updated_at = 8;
+  Category category = 9;
+}
+
+message Category {
+  int32 id = 1;
+  string name = 2;
+  string description = 3;
+  google.protobuf.Timestamp created_at = 4;
+  google.protobuf.Timestamp updated_at = 5;
+}

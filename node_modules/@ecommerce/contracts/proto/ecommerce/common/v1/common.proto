@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+package ecommerce.common.v1;
+
+
+
+// ============================================================================
+// Common Types
+// ============================================================================
+
+enum SortOrder {
+  SORT_ORDER_UNSPECIFIED = 0;
+  SORT_ORDER_ASC = 1;
+  SORT_ORDER_DESC = 2;
+}
+
+// ============================================================================
+// Common Responses / Metadata
+// ============================================================================
+
+message PageMeta {
+  int32 page = 1;
+  int32 limit = 2;
+  int32 total_items = 3;
+  int32 total_pages = 4;
+  bool has_next_page = 5;
+  bool has_previous_page = 6;
+}

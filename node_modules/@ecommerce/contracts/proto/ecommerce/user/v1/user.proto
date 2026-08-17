@@ -1,0 +1,157 @@
+syntax = "proto3";
+
+package ecommerce.user.v1;
+
+import "google/protobuf/timestamp.proto";
+import "ecommerce/common/v1/common.proto";
+import "buf/validate/validate.proto";
+
+// ============================================================================
+// User Service
+// ============================================================================
+
+service UserService {
+  rpc Create(UserServiceCreateRequest)
+      returns (UserServiceCreateResponse);
+
+  rpc GetById(UserServiceGetByIdRequest)
+      returns (UserServiceGetByIdResponse);
+
+  rpc Update(UserServiceUpdateRequest)
+      returns (UserServiceUpdateResponse);
+
+  rpc Delete(UserServiceDeleteRequest)
+      returns (UserServiceDeleteResponse);
+
+  rpc Restore(UserServiceRestoreRequest)
+      returns (UserServiceRestoreResponse);
+
+  rpc Paginate(UserServicePaginateRequest)
+      returns (UserServicePaginateResponse);
+}
+
+// ============================================================================
+// Requests
+// ============================================================================
+
+message UserServiceCreateRequest {
+  string name = 1 [
+    (buf.validate.field).string = {
+      min_len: 1
+      max_len: 255
+    }
+  ];
+
+  string email = 2 [
+    (buf.validate.field).string = {
+      min_len: 1
+      max_len: 320
+      email: true
+    }
+  ];
+}
+
+message UserServiceGetByIdRequest {
+  int32 id = 1 [
+    (buf.validate.field).int32.gt = 0
+  ];
+}
+
+message UserServiceUpdateRequest {
+  int32 id = 1 [
+    (buf.validate.field).int32.gt = 0
+  ];
+
+  optional string name = 2 [
+    (buf.validate.field).string = {
+      min_len: 1
+      max_len: 255
+    }
+  ];
+
+  optional string email = 3 [
+    (buf.validate.field).string = {
+      min_len: 1
+      max_len: 320
+      email: true
+    }
+  ];
+}
+
+message UserServiceDeleteRequest {
+  int32 id = 1 [
+    (buf.validate.field).int32.gt = 0
+  ];
+}
+
+message UserServiceRestoreRequest {
+  int32 id = 1 [
+    (buf.validate.field).int32.gt = 0
+  ];
+}
+
+message UserServicePaginateRequest {
+  int32 page = 1 [
+    (buf.validate.field).int32.gt = 0
+  ];
+
+  int32 limit = 2 [
+    (buf.validate.field).int32 = {
+      gt: 0
+      lte: 100
+    }
+  ];
+
+  optional string search = 3 [
+    (buf.validate.field).string.max_len = 100
+  ];
+
+  optional string order_by = 4 [
+    (buf.validate.field).string.max_len = 50
+  ];
+
+  ecommerce.common.v1.SortOrder order = 5 [
+    (buf.validate.field).enum.defined_only = true
+  ];
+}
+
+// ============================================================================
+// Responses
+// ============================================================================
+
+message UserServiceCreateResponse {
+  User user = 1;
+}
+
+message UserServiceGetByIdResponse {
+  User user = 1;
+}
+
+message UserServiceUpdateResponse {
+  User user = 1;
+}
+
+message UserServiceDeleteResponse {
+  bool success = 1;
+}
+
+message UserServiceRestoreResponse {
+  User user = 1;
+}
+
+message UserServicePaginateResponse {
+  repeated User items = 1;
+  ecommerce.common.v1.PageMeta meta = 2;
+}
+
+// ============================================================================
+// Domain
+// ============================================================================
+
+message User {
+  int32 id = 1;
+  string name = 2;
+  string email = 3;
+  google.protobuf.Timestamp created_at = 4;
+  google.protobuf.Timestamp updated_at = 5;
+}
